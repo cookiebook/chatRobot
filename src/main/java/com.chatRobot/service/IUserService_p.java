@@ -10,8 +10,8 @@ public interface IUserService_p {
     //    @Select("select * from user_p")
 //    public List<User_p> selectAll();
 //
-    public User_p selectByPrimaryKey(Integer id);
-    public void insertUser(List<User_p> users);
+     User_p selectByPrimaryKey(Integer id);
+     void insertUser(List<User_p> users);
     List<User_p> selectbypassword(String password);
     void showProductsByPage(HttpServletRequest request, ModelAndView model, String loginUserId);
 }

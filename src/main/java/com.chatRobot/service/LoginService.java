@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
  */
 public interface LoginService {
     //判断是否存在该用户
-    public boolean isSales(Sales sales);
-    public void Login(ModelAndView res, String result) throws UnsupportedEncodingException;
+     boolean isSales(Sales sales);
+     void Login(ModelAndView res, String result) throws UnsupportedEncodingException;
 
 }
