@@ -1,0 +1,123 @@
+<html lang="true" xmlns="http://java.sun.com/jsf/composite">
+<head>
+	<meta charset="UTF-8">
+	<title>login</title>
+	<script src="views/js/jquery-3.2.1.js"></script>
+	<script src="views/js/Barrett.js"></script>
+	<script type="text/javascript" src="views/js/RSA.js"></script>
+	<script type="text/javascript" src="views/js/BigInt.js"></script>
+	<script type="text/javascript" src="views/js/RSAJson.js"></script>
+	<script type="text/javascript">
+
+function rsalogin(){
+	var thisPwd = document.getElementById("password").value;
+	bodyRSA();
+    var postData = {"id":1,"name":"zzx","password":thisPwd};
+	var pwd = encryptedString(key, encodeURIComponent(JSON.stringify(postData)));
+    var result={result:pwd};
+    RSAJsonByget(result);
+    alert(RSAdata);
+//    get方法传json字符串
+//    $.get('http://localhost:8080/ChatRobot/user/views/getKeyMap',result, function (data) {
+//        if (data) {
+//            alert(data.password);
+////            $("#save").submit();
+//        }
+//    },"json");
+
+          //post方法传json字符串
+//        $.ajax({
+//        url: 'http://localhost:8080/ChatRobot/user/views/postKeyMap',
+////        contentType: "application/json; charset=utf-8",
+//        type: 'post',
+//		data: result,
+//		success: function (e) {
+//            //成功后回调
+//            alert(e.password);
+//            alert(e+"hh");
+//        },
+//        error: function (e) {
+//            //失败后回调
+//            alert("服务器请求失败");
+//        },
+//        beforeSend: function () {
+//            //发送请求前调用，可以放一些"正在加载"之类额话
+//            alert("正在加载");
+//        }
+//    })
+
+
+
+
+
+
+
+
+
+
+//    $.ajax({
+//        url: 'http://localhost:8080/ChatRobot/user/views/postKeyMap',
+//        contentType: "application/json; charset=utf-8",
+//        type: 'post',
+////        contentType:application/xml,
+////        data: '{"id":1,"name":"zzx","password":"123456"}',
+//		data: JSON.stringify(postData),
+//		success: function (e) {
+//            //成功后回调
+//            alert(e.password);
+////            alert(e+"hh");
+//        },
+////		data:{secret:secret},
+//		//{\"id\":1,\"name\":\"zzx\",\"password\":\"123456\"}
+//        error: function (e) {
+//            //失败后回调
+//            alert("服务器请求失败");
+//        },
+//        beforeSend: function () {
+//            //发送请求前调用，可以放一些"正在加载"之类额话
+//            alert("正在加载");
+//        }
+//    })
+
+
+
+
+
+
+
+    //alert(encodeURIComponent(thisPwd)+"\r\n"+result);
+//	 loginForm.action="loginCHK.jsp?result="+result;
+//	 loginForm.submit();
+
+	
+}
+</script>
+
+</head>
+
+<body>
+	<form method="post" name="loginForm" target=_blank>
+		<table border="0">
+			<tr>
+				<td>
+					Password:
+				</td>
+				<td>
+				<label for="password">密码：</label>	<input type='text' name="password" id=password style='width:400px' value="my passwd"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="button" value="SUBMIT" onclick="rsalogin();" />
+				</td>
+			</tr>
+		</table>
+	</form>
+	<input type="button" value="SUBMIT" onclick="rsalogin();" />
+	<div>
+		<ul id="list">
+			<li></li>
+		</ul>
+	</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="jquery-3.2.1.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $("#test").click(function () {
+                    $.ajax({
+                        url: 'http://localhost:8080/ChatRobot/user/requestJson',
+                        contentType: "application/json",
+                        type: 'post',
+                        data: '{"password":"123456"}',
+                        success: function (e) {
+                            //成功后回调
+                            alert("成功");
+                            var json = eval(e); //数组
+                            $.each(json, function (index, item) {
+                                //循环获取数据
+                                var id = json[index].id;
+                                var name = json[index].name;
+                                var password = json[index].password;
+                                $("#list").html($("#list").html() + "<br>" + id + " - " + name + " - " + password + "<br/>");
+
+                            });
+                        },
+                        error: function (e) {
+                            //失败后回调
+                            alert("服务器请求失败");
+                        },
+                        beforeSend: function () {
+                            //发送请求前调用，可以放一些"正在加载"之类额话
+                            alert("正在加载");
+                        }
+                    })
+
+
+                })
+            })
+        function loadXMLDoc()
+        {
+            var xmlhttp;
+            if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+                }
+            }
+            xmlhttp.open("get","/ChatRobot/user/requestJson_p",true);
+            xmlhttp.send();
+        }
+    </script>
+
+</head>
+<body onload="loadXMLDoc()">
+<h2>AJAX</h2>
+<button type="button" onclick="loadXMLDoc()">请求数据</button>
+<button type="button" id="test">请求List数据</button>
+<a href="myProductPage">首页</a>
+<div id="myDiv">
+
+</div>
+
+<div>
+    <ul id="list">
+        <li></li>
+    </ul>
+</div>
+
+
+</body>
+</html>

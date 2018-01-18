@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+
+    <bean id="lina" class="com.chatRobot.service.impl.LoginServiceImpl"/>
+    <bean id ="sleepHelper" class="com.chatRobot.service.aspect.AOPLoginLog"/>
+
+    <aop:config>
+        <aop:pointcut id="login" expression="execution(* *.login(..))"/>
+        <aop:pointcut id="RSA" expression="execution(* com..*.*(*,*,String))"/>
+        <aop:pointcut id="action" expression="within(com..*.*Controller)"/>
+        <aop:pointcut id="Cookie" expression="execution(* *.checkCookie(..))"/>
+        <aop:aspect ref="sleepHelper">
+            <!--<aop:before method="before" pointcut-ref="login"/>-->
+            <aop:around method="around" pointcut-ref="action"/>
+            <aop:around method="RSAaround" pointcut-ref="action"/>
+            <aop:around method="RSACookie" pointcut-ref="Cookie"/>
+            <!--<aop:after method="afterReturningLog" pointcut-ref="login"/>-->
+            <!--<aop:after-returning method="afterReturningLog" pointcut-ref="login"/>-->
+        </aop:aspect>
+    </aop:config>
+</beans>
