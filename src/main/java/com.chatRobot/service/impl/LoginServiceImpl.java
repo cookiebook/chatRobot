@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -18,29 +19,28 @@ import java.io.UnsupportedEncodingException;
 public class LoginServiceImpl implements LoginService {
     @Resource
     private SalesMapper salesDao;
-    public boolean isSales(Sales sales){
-//        salesDao.selectbypassword(sales.getPassword());
-         int flag=salesDao.selectByPrimaryKeyandPassword( sales.getsId(),sales.getPassword());
-//        salesDao.deleteByPrimaryKey(sales.getsId());
-        if(flag==1)
-            return true;
-        else
-            return false;
+    public Sales isSales(Sales sales){
+          sales=salesDao.selectByPrimaryKeyandPassword( sales.getsId(),sales.getPassword());
+          return sales;
 
     }
-
-    public void Login( ModelAndView res, String result) throws UnsupportedEncodingException {
+    public void Login(HttpServletRequest request, ModelAndView res, String result) throws UnsupportedEncodingException {
         JSONObject jsonObject=JSONObject.fromObject(result);
         Sales sales=(Sales)JSONObject.toBean(jsonObject, Sales.class);
-        if(this.isSales(sales))
+        sales=salesDao.selectByPrimaryKeyandPassword(sales.getsId(),sales.getPassword());
+        if(sales!=null)
         {
-            res.setViewName("main");
-            res.addObject("username",sales.getsId());
+            res.addObject("tId",sales.getsId());
+            res.setViewName("index");
+            res.addObject("User",sales);
+            request.getSession().setAttribute("user",sales);
+            res.addObject("log","登陆成功");
         }
         else
         {
-            res.setViewName("login");
-            res.addObject("info","用户不存在");
+            res.addObject("tId",0);
+            res.addObject("log","登陆失败");
+            res.setViewName("redirect:/viewN/loginout");
         }
     }
 }

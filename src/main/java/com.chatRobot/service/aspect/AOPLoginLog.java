@@ -2,6 +2,7 @@ package com.chatRobot.service.aspect;
 
 import com.chatRobot.dao.LogMapper;
 import com.chatRobot.model.Log;
+import com.chatRobot.model.Sales;
 import com.chatRobot.service.impl.LoginServiceImpl;
 import com.chatRobot.tool.JudgeLogType;
 import com.chatRobot.tool.RSA;
@@ -19,68 +20,94 @@ import java.util.Date;
 public class AOPLoginLog {
     @Autowired
     private LogMapper dao;
-    private Log user = new Log();
+    private Log log = new Log();
 
     @Resource(name="LoginService")
     private LoginServiceImpl loginService;
-// 登录日志
-    public ModelAndView around(ProceedingJoinPoint point) throws Throwable {
-        Object arr[] = point.getArgs();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String url = request.getServletPath();
-        user.setDate(new Date());
-        user.setType(JudgeLogType.getType(url));
-        user.setlId(Integer.parseInt(String.valueOf(System.currentTimeMillis()).substring(4, 13)));
-        ModelAndView res = (ModelAndView) point.proceed(arr);
-        Object o = res.getModel().get("username");
-        if (o != null) {
-            String id=o.toString();
-            user.setsId(Integer.parseInt(id));
-            user.settId(Integer.parseInt(id));
-            user.setDescription("登录成功");
-            dao.insert(user);
-        }
-        return res;
-    }
+
+
 //RSA解密
     public Object RSAaround(ProceedingJoinPoint point) throws Throwable {
         Object arr[] = point.getArgs();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//        ServletWebRequest servletWebRequest=new ServletWebRequest(request);
-//        HttpServletResponse response=servletWebRequest.getResponse();
         String secret = request.getParameter("result");
         if(secret!=null) {
+//            System.out.println("加密密文"+secret);
             String result = RSA.getKeyMap(secret);
+//            System.out.println("解密结果："+result);
             arr[2] = result;
         }
         return point.proceed(arr);
     }
 
     public Object RSACookie(ProceedingJoinPoint point) throws Throwable {
-        ModelAndView res=new ModelAndView("login");
+        Object arr[] = point.getArgs();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         Cookie[] cookies = request.getCookies();
         String email = null;
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 String name = cookie.getName();
-                if ("user".equals(name)) {
+                if ("userCookie".equals(name)) {
                     email = cookie.getValue();
                 }
             }
         }
-        if(email==null)
-            return res;
-            String result = RSA.getKeyMap(email.toString());
-        res= (ModelAndView) point.proceed();
+        String result=null;
+        if(email!=null)
+            result = RSA.getKeyMap(email.toString());
+        if(arr[2]==null)
+            arr[2]=result;
+        return point.proceed(arr);
+    }
 
-        loginService.Login(res,result);
+
+
+    public ModelAndView around(ProceedingJoinPoint point) throws Throwable {
+        Object arr[] = point.getArgs();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String url = request.getServletPath();
+        log.setDate(new Date());
+        log.setType(JudgeLogType.getType(url));
+        log.setlId(Integer.parseInt(String.valueOf(System.currentTimeMillis()).substring(4, 13)));
+        point.proceed();
+        ModelAndView res= (ModelAndView) arr[1];
+        Sales o = (Sales)res.getModel().get("User");
+        if (o != null&&o.getsId()!=null) {
+            String id=o.getsId().toString();
+            log.setsId(Integer.parseInt(id));
+            log.settId(id);
+            log.setDescription("成功");
+            dao.insert(log);
+        }
         return res;
+    }
+    public ModelAndView Logaround(ProceedingJoinPoint point) throws Throwable {
+        Object arr[] = point.getArgs();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String url = request.getServletPath();
+        url=JudgeLogType.getType(url);
+        log.setDate(new Date());
+        log.setType(url);
+        log.setlId(Integer.parseInt(String.valueOf(System.currentTimeMillis()).substring(4, 13)));
+        ModelAndView res = (ModelAndView) point.proceed();
+        Sales sales = (Sales) request.getSession().getAttribute("user");
+        String o = (String) res.getModel().get("log");
+        String tId = res.getModel().get("tId").toString();
+        if (sales != null && sales.getsId() != null) {
+            String id = sales.getsId().toString();
+            log.setsId(Integer.parseInt(id));
+            log.settId(tId);
+            log.setDescription(log.getsId()+"执行"+url+o);
+            dao.insert(log);
+        }
+        return res;
+
     }
 
     public void afterReturningLog() {
 //        HttpServletResponse response = ((ServletRequestAttributes) ResponseContextHolder.getRequestAttributes()).getRequest();
-        System.out.println("方法成功执行后通知 日志记录:");
+//        System.out.println("方法成功执行后通知 日志记录:");
 //        int id=Integer.parseInt(request.getParameter("username"));
 //        user.setDescription("登录成功");
 //        user.setType("1");
@@ -88,5 +115,17 @@ public class AOPLoginLog {
 //        user.setlId(id);
 //        dao.insert(user);
     }
+
+//    public ModelAndView checkLogin(ProceedingJoinPoint point) throws Throwable {
+//        ModelAndView res=new ModelAndView("redirect:/viewN/loginout");
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        Object email = request.getSession().getAttribute("user");
+//        if(email==null&&(request.getServletPath().indexOf("loginout")<0)) {
+//            return res;
+//        }
+//        res= (ModelAndView) point.proceed();
+//        return res;
+//    }
+
 
 }

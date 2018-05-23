@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+    <!-- 指明满足“/*”的页面，将被“/pub.jsp”所装饰 -->
+    <mapping path="/*" decorator="/WEB-INF/bootstrap/pub.jsp" />
+    <!--<mapping path="/view/login" exclue="true" />-->
+    <mapping path="/viewN/*" exclue="true" />
+    <mapping path="/*/login.jsp" exclue="true" />
+    <mapping path="/*/error.jsp" exclue="true" />
+    <mapping path="/login.jsp*" exclue="true" />
+</sitemesh>
+
+
+
+

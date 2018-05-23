@@ -13,14 +13,20 @@
 
     <aop:config>
         <aop:pointcut id="login" expression="execution(* *.login(..))"/>
+        <aop:pointcut id="log" expression="execution(* *.Login(..))"/>
+        <aop:pointcut id="Log" expression="within(com..*.*Controller)"/>
         <aop:pointcut id="RSA" expression="execution(* com..*.*(*,*,String))"/>
         <aop:pointcut id="action" expression="within(com..*.*Controller)"/>
-        <aop:pointcut id="Cookie" expression="execution(* *.checkCookie(..))"/>
+        <aop:pointcut id="Cookie" expression="execution(* *.login(*,*,String))"/>
+
+        <!--<aop:pointcut id="ALL" expression="within(com..*.*)"/>-->
         <aop:aspect ref="sleepHelper">
             <!--<aop:before method="before" pointcut-ref="login"/>-->
-            <aop:around method="around" pointcut-ref="action"/>
+            <!--<aop:around method="around" pointcut-ref="log"/>-->
+            <aop:around method="Logaround" pointcut-ref="Log"/>
             <aop:around method="RSAaround" pointcut-ref="action"/>
-            <aop:around method="RSACookie" pointcut-ref="Cookie"/>
+            <aop:around method="RSACookie" pointcut-ref="login"/>
+            <!--<aop:around method="checkLogin" pointcut-ref="action"/>-->
             <!--<aop:after method="afterReturningLog" pointcut-ref="login"/>-->
             <!--<aop:after-returning method="afterReturningLog" pointcut-ref="login"/>-->
         </aop:aspect>

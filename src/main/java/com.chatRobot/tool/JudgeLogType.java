@@ -5,9 +5,7 @@ package com.chatRobot.tool;
  */
 public class JudgeLogType {
     public static String getType(String s){
-        if(s.indexOf("login")!=-1)
-            return "1";
-        else
-            return "0";
+        String str[]=s.split("/");
+        return str[str.length-1];
     }
 }

@@ -12,7 +12,7 @@
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="Date" property="date" jdbcType="DATE" />
     <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="T_ID" property="tId" jdbcType="INTEGER" />
+    <result column="T_ID" property="tId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     <!--
@@ -33,6 +33,27 @@
     from log
     where L_ID = #{lId,jdbcType=INTEGER}
   </select>
+
+  <select id="getCount" resultType="long">
+    SELECT COUNT(*) FROM Log
+  </select>
+
+  <select id="getAll" resultMap="BaseResultMap">
+    SELECT * FROM Log ORDER BY Date DESC limit #{startPos},#{pageSize}
+  </select>
+
+
+  <select id="getLogCount" resultType="long">
+    SELECT COUNT(*) FROM Log WHERE  S_ID=#{acNum,jdbcType=INTEGER} or T_ID=#{acNum,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap">
+    select
+    *
+    from Log WHERE S_ID=#{acNum,jdbcType=INTEGER} or T_ID=#{acNum,jdbcType=VARCHAR} ORDER BY Date DESC limit #{startPos},#{pageSize}
+  </select>
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     <!--
       WARNING - @mbggenerated
@@ -52,7 +73,7 @@
       Date, description, T_ID
       )
     values (#{lId,jdbcType=INTEGER}, #{sId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
-      #{date,jdbcType=DATE}, #{description,jdbcType=VARCHAR}, #{tId,jdbcType=INTEGER}
+      #{date,jdbcType=DATE}, #{description,jdbcType=VARCHAR}, #{tId,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.chatRobot.model.Log" >
@@ -124,7 +145,7 @@
         description = #{description,jdbcType=VARCHAR},
       </if>
       <if test="tId != null" >
-        T_ID = #{tId,jdbcType=INTEGER},
+        T_ID = #{tId,jdbcType=VARCHAR},
       </if>
     </set>
     where L_ID = #{lId,jdbcType=INTEGER}
@@ -140,7 +161,7 @@
       type = #{type,jdbcType=VARCHAR},
       Date = #{date,jdbcType=DATE},
       description = #{description,jdbcType=VARCHAR},
-      T_ID = #{tId,jdbcType=INTEGER}
+      T_ID = #{tId,jdbcType=VARCHAR}
     where L_ID = #{lId,jdbcType=INTEGER}
   </update>
 </mapper>
